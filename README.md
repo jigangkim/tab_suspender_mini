@@ -2,6 +2,8 @@
 
 This extension improves browser performance by automatically suspending inactive tabs, reducing memory and CPU usage. It offers flexibility with customizable settings and user-defined exceptions.
 
+https://addons.mozilla.org/user-media/previews/full/304/304886.png?modified=1725559776
+
 ## Features
 
 ### Tab Suspension
