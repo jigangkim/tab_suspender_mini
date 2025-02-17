@@ -112,19 +112,19 @@ function suspendTab(tabId) {
                 // });
 
                 console.log("Skip capturing screenshot for tab:", tabId);
-                    const suspendedUrl = browser.runtime.getURL("src/suspended/suspended.html") +
-                        "?url=" + encodeURIComponent(tab.url) +
-                        "&title=" + encodedTitle +
-                        "&prefix=" + encodeURIComponent(SUSPENDED_PREFIX) +
-                        "&favicon=" + encodeURIComponent(tab.favIconUrl || '');
+                const suspendedUrl = browser.runtime.getURL("src/suspended/suspended.html") +
+                    "?url=" + encodeURIComponent(tab.url) +
+                    "&title=" + encodedTitle +
+                    "&prefix=" + encodeURIComponent(SUSPENDED_PREFIX) +
+                    "&favicon=" + encodeURIComponent(tab.favIconUrl || '');
 
-                    browser.tabs.update(tabId, { url: suspendedUrl }).then(() => {
-                        console.log("Tab suspended without screenshot:", tabId);
-                        updateIcon(true);
-                        resolve();
-                    }).catch(error => {
-                        console.error("Error updating tab without screenshot:", tabId, error);
-                        reject(error);
+                browser.tabs.update(tabId, { url: suspendedUrl }).then(() => {
+                    console.log("Tab suspended without screenshot:", tabId);
+                    updateIcon(true);
+                    resolve();
+                }).catch(error => {
+                    console.error("Error updating tab without screenshot:", tabId, error);
+                    reject(error);
                 });
             }).catch(error => {
                 console.error("Error checking exception domain:", error);
