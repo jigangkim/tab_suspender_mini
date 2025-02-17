@@ -73,28 +73,45 @@ function suspendTab(tabId) {
                 const encodedTitle = encodeURIComponent(tab.title || 'Untitled');
                 console.log("Encoded title:", encodedTitle);
 
-                console.log("Attempting to capture screenshot for tab:", tabId);
-                browser.tabs.captureTab(tabId, { format: 'jpeg', quality: 50 }).then(screenshotUrl => {
-                    console.log("Screenshot captured for tab:", tabId);
-                    const suspendedUrl = browser.runtime.getURL("src/suspended/suspended.html") +
-                        "?url=" + encodeURIComponent(tab.url) +
-                        "&title=" + encodedTitle +
-                        "&prefix=" + encodeURIComponent(SUSPENDED_PREFIX) +
-                        "&favicon=" + encodeURIComponent(tab.favIconUrl || '') +
-                        "&screenshot=" + encodeURIComponent(screenshotUrl);
+                // console.log("Attempting to capture screenshot for tab:", tabId);
+                // browser.tabs.captureTab(tabId, { format: 'jpeg', quality: 50 }).then(screenshotUrl => {
+                //     console.log("Screenshot captured for tab:", tabId);
+                //     const suspendedUrl = browser.runtime.getURL("src/suspended/suspended.html") +
+                //         "?url=" + encodeURIComponent(tab.url) +
+                //         "&title=" + encodedTitle +
+                //         "&prefix=" + encodeURIComponent(SUSPENDED_PREFIX) +
+                //         "&favicon=" + encodeURIComponent(tab.favIconUrl || '') +
+                //         "&screenshot=" + encodeURIComponent(screenshotUrl);
 
-                    console.log("Suspended URL:", suspendedUrl);
-                    browser.tabs.update(tabId, { url: suspendedUrl }).then(() => {
-                        console.log("Tab successfully suspended:", tabId);
-                        updateIcon(true);
-                        resolve();
-                    }).catch(error => {
-                        console.error("Error updating tab:", tabId, error);
-                        reject(error);
-                    });
-                }).catch(error => {
-                    console.error("Error capturing screenshot:", error);
-                    // If screenshot capture fails, suspend the tab without a screenshot
+                //     console.log("Suspended URL:", suspendedUrl);
+                //     browser.tabs.update(tabId, { url: suspendedUrl }).then(() => {
+                //         console.log("Tab successfully suspended:", tabId);
+                //         updateIcon(true);
+                //         resolve();
+                //     }).catch(error => {
+                //         console.error("Error updating tab:", tabId, error);
+                //         reject(error);
+                //     });
+                // }).catch(error => {
+                //     console.error("Error capturing screenshot:", error);
+                //     // If screenshot capture fails, suspend the tab without a screenshot
+                //     const suspendedUrl = browser.runtime.getURL("src/suspended/suspended.html") +
+                //         "?url=" + encodeURIComponent(tab.url) +
+                //         "&title=" + encodedTitle +
+                //         "&prefix=" + encodeURIComponent(SUSPENDED_PREFIX) +
+                //         "&favicon=" + encodeURIComponent(tab.favIconUrl || '');
+
+                //     browser.tabs.update(tabId, { url: suspendedUrl }).then(() => {
+                //         console.log("Tab suspended without screenshot:", tabId);
+                //         updateIcon(true);
+                //         resolve();
+                //     }).catch(error => {
+                //         console.error("Error updating tab without screenshot:", tabId, error);
+                //         reject(error);
+                //     });
+                // });
+
+                console.log("Skip capturing screenshot for tab:", tabId);
                     const suspendedUrl = browser.runtime.getURL("src/suspended/suspended.html") +
                         "?url=" + encodeURIComponent(tab.url) +
                         "&title=" + encodedTitle +
@@ -108,7 +125,6 @@ function suspendTab(tabId) {
                     }).catch(error => {
                         console.error("Error updating tab without screenshot:", tabId, error);
                         reject(error);
-                    });
                 });
             }).catch(error => {
                 console.error("Error checking exception domain:", error);
