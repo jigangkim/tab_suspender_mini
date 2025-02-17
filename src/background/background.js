@@ -241,6 +241,37 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ success: false, error: error.message });
         });
         return true; // Indicates that we will send a response asynchronously
+    } else if (message.action === "suspendAllTabsExceptCurrentTab") {
+        console.log("Suspending all tabs except current tab");
+        browser.tabs.query({ active: true, currentWindow: true }).then(activeTabs => {
+            if (activeTabs.length > 0) {
+                const currentTab = activeTabs[0];
+                console.log("Found current tab:", currentTab.id);
+                // Get all tabs in current window
+                return browser.tabs.query({ currentWindow: true }).then(allTabs => {
+                    const suspendPromises = allTabs
+                        .filter(tab => tab.id !== currentTab.id) // Skip current tab
+                        .map(tab => suspendTab(tab.id));
+                    
+                    return Promise.all(suspendPromises)
+                        .then(() => {
+                            console.log("All other tabs except current tab suspended successfully");
+                            sendResponse({ success: true });
+                        })
+                        .catch(error => {
+                            console.error("Error during tabs suspension:", error);
+                            sendResponse({ success: false, error: error.message });
+                        });
+                });
+            } else {
+                console.log("No active tab found");
+                sendResponse({ success: false, error: "No active tab found" });
+            }
+        }).catch(error => {
+            console.error("Error querying tabs:", error);
+            sendResponse({ success: false, error: error.message });
+        });
+        return true; // Indicates that we will send a response asynchronously    
     } else if (message.action === "updateTimer") {
         SUSPEND_DELAY = message.value * 60; // Convert minutes to seconds
         console.log("Suspension timer updated:", SUSPEND_DELAY);

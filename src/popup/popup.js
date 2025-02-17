@@ -92,4 +92,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("Error sending message:", error);
             });
     });
+
+    // Add event listener for the suspend all tabs except current tab button
+    const suspendAllTabsExceptCurrentTabButton = document.getElementById('suspendAllTabsExceptCurrentTab');
+    suspendAllTabsExceptCurrentTabButton.addEventListener('click', () => {
+        console.log("Suspend all except current tab button clicked");
+        browser.runtime.sendMessage({ action: "suspendAllTabsExceptCurrentTab" })
+            .then(response => {
+                console.log("Message sent successfully", response);
+                window.close(); // Close the popup after sending the message
+            })
+            .catch(error => {
+                console.error("Error sending message:", error);
+            });
+    });
+
 });
