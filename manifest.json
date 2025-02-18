@@ -10,8 +10,6 @@
     "description": "Suspends inactive tabs after 60 seconds",
     "permissions": [
         "tabs",
-        "<all_urls>",
-        "activeTab",
         "storage"
     ],
     "background": {
