@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load existing timer setting
     browser.storage.local.get('suspensionTimer', function (data) {
-        suspensionTimerInput.value = data.suspensionTimer || 1;
+        suspensionTimerInput.value = data.suspensionTimer || 60;
     });
 
     // Save timer setting

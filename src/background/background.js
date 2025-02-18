@@ -1,6 +1,6 @@
 console.log("Tab Suspender extension loaded");
 
-let SUSPEND_DELAY = 60; // default 1 minute
+let SUSPEND_DELAY = 3600; // default 1 hour
 const SUSPENDED_PREFIX = "💤 ";
 let suspensionTimers = {};
 
