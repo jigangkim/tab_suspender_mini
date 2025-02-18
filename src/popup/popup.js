@@ -120,4 +120,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("Error sending message:", error);
             });
     });
+
+    // Add event listener for the unsuspend all tabs button
+    const removeDuplicateTabsButton = document.getElementById('removeDuplicateTabs');
+    removeDuplicateTabsButton.addEventListener('click', () => {
+        console.log("Remove duplicate tabs clicked");
+        browser.runtime.sendMessage({ action: "removeDuplicateTabs" })
+            .then(response => {
+                console.log("Message sent successfully", response);
+                window.close(); // Close the popup after sending the message
+            })
+            .catch(error => {
+                console.error("Error sending message:", error);
+            });
+    });
 });

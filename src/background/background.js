@@ -313,6 +313,36 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ success: false, error: error.message });
         });
         return true; // Indicates that we will send a response asynchronously
+    } else if (message.action === "removeDuplicateTabs") {
+        console.log("Removing duplicate tabs");
+        browser.tabs.query({ currentWindow: true }).then(allTabs => {
+            const urlMap = new Map();
+            const duplicatePromises = [];
+
+            allTabs.forEach(tab => {
+                if (urlMap.has(tab.url)) {
+                    console.log("Duplicate tab found:", tab.url, "for tab ID:", tab.id);
+                    // If a duplicate is found, add a promise to close it
+                    duplicatePromises.push(browser.tabs.remove(tab.id));
+                } else {
+                    urlMap.set(tab.url, tab.id); // Store the tab URL and its ID
+                }
+            });
+
+            return Promise.all(duplicatePromises)
+                .then(() => {
+                    console.log("Duplicate tabs removed successfully");
+                    sendResponse({ success: true });
+                })
+                .catch(error => {
+                    console.error("Error during duplicate tab removal:", error);
+                    sendResponse({ success: false, error: error.message });
+                });
+        }).catch(error => {
+            console.error("Error querying tabs:", error);
+            sendResponse({ success: false, error: error.message });
+        });
+        return true; // Indicates that we will send a response asynchronously
     } else if (message.action === "updateTimer") {
         SUSPEND_DELAY = message.value * 60; // Convert minutes to seconds
         console.log("Suspension timer updated:", SUSPEND_DELAY);
