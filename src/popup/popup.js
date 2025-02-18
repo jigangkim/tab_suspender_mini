@@ -107,4 +107,17 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
+    // Add event listener for the unsuspend all tabs button
+    const unsuspendAllTabsButton = document.getElementById('unsuspendAllTabs');
+    unsuspendAllTabsButton.addEventListener('click', () => {
+        console.log("Unsuspend all tabs clicked");
+        browser.runtime.sendMessage({ action: "unsuspendAllTabs" })
+            .then(response => {
+                console.log("Message sent successfully", response);
+                window.close(); // Close the popup after sending the message
+            })
+            .catch(error => {
+                console.error("Error sending message:", error);
+            });
+    });
 });

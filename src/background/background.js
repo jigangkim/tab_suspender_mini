@@ -272,6 +272,45 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ success: false, error: error.message });
         });
         return true; // Indicates that we will send a response asynchronously    
+    } else if (message.action === "unsuspendAllTabs") {
+        console.log("Unsuspending all tabs");
+        browser.tabs.query({ currentWindow: true }).then(allTabs => {
+            if (allTabs.length > 0) {
+                console.log("Found tabs to unsuspend:", allTabs.length);
+                // Get all suspended tabs
+                const unsuspendPromises = allTabs
+                    .filter(tab => tab.url.startsWith(browser.runtime.getURL("src/suspended/suspended.htm")))
+                    .map(tab => {
+                        const suspendedUrl = new URL(tab.url);
+                        const originalUrl = suspendedUrl.searchParams.get('url');
+                        if (originalUrl) {
+                            console.log("Extracted original URL", originalUrl, "for tab", tab.id);
+                            return browser.tabs.update(tab.id, { url: originalUrl });
+                        }
+                        else {
+                            console.log("Unable to get original URL for suspended tab:", tab.id);
+                        }
+                        return Promise.resolve(); // Skip if no original URL found
+                    });
+                
+                return Promise.all(unsuspendPromises)
+                    .then(() => {
+                        console.log("All tabs unsuspended successfully");
+                        sendResponse({ success: true });
+                    })
+                    .catch(error => {
+                        console.error("Error during tabs unsuspension:", error);
+                        sendResponse({ success: false, error: error.message });
+                    });
+            } else {
+                console.log("No tabs found");
+                sendResponse({ success: false, error: "No tabs found" });
+            }
+        }).catch(error => {
+            console.error("Error querying tabs:", error);
+            sendResponse({ success: false, error: error.message });
+        });
+        return true; // Indicates that we will send a response asynchronously
     } else if (message.action === "updateTimer") {
         SUSPEND_DELAY = message.value * 60; // Convert minutes to seconds
         console.log("Suspension timer updated:", SUSPEND_DELAY);
